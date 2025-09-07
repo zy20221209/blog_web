@@ -43,6 +43,7 @@ class CommentForm(forms.ModelForm):
         fields = ['content']  # 只允许用户编辑评论内容
         widgets = {
             'content': forms.Textarea(attrs={
+                'maxlength':500,
                 'rows': 4,
                 'placeholder': '写下你的评论...',
                 'class': 'form-control'
@@ -57,8 +58,8 @@ class CommentForm(forms.ModelForm):
         自定义验证：确保评论内容有意义
         """
         content = self.cleaned_data['content'].strip()
-        if len(content) < 3:
-            raise forms.ValidationError("评论内容至少需要3个字符。")
+        if len(content) < 1:
+            raise forms.ValidationError("评论内容至少需要1个字符。")
         if len(content) > 1000:
             raise forms.ValidationError("评论内容不能超过1000个字符。")
         return content

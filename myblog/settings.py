@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-cioh^i3ltnz^g46wp#6+ohpkk!8q3zm0jzggeyt3ts^_l9nu%4
 DEBUG = True
 
 ALLOWED_HOSTS = [
-     'lively-rich-tadpole.ngrok-free.app'
+     'lively-rich-tadpole.ngrok-free.app',
+     '127.0.0.1'
 ]
 
 # settings.py
@@ -93,7 +94,10 @@ DATABASES = {
         'USER':'root',
         'PASSWORD':'Zy123456',
         'HOST':'127.0.0.1',
-        'PORT':3306
+        'PORT':3306,
+        'OPTIONS':{
+            'charset':'utf8mb4'
+        }
     }
 }
 
