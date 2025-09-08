@@ -1,11 +1,53 @@
 from django import forms
 from .models import Post, Tag,Comment
 
+
+from django.forms.widgets import TextInput
+from .models import Tag
+
+class TagWidget(TextInput):
+    """自定义 Widget：显示为文本输入框"""
+    def __init__(self, attrs=None):
+        default_attrs = {'placeholder': '输入标签，用英文逗号分隔'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(default_attrs)
+
+class TagField(forms.CharField):
+    """自定义字段：处理逗号分隔的标签字符串"""
+    widget = TagWidget
+
+    def __init__(self, *args, **kwargs):
+        self.is_required = kwargs.get('required', False)
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        """将输入字符串转换为 Tag 对象列表"""
+        if not value:
+            return []
+        # 分割并清理标签名
+        tag_names = [name.strip() for name in value.split(',') if name.strip()]
+        tags = []
+        for name in tag_names:
+            tag, created = Tag.objects.get_or_create(
+                name=name.lower()  # 统一小写，避免重复
+            )
+            tags.append(tag)
+        return tags
+
+    def prepare_value(self, value):
+        """将已有标签转换为逗号分隔的字符串（用于表单回显）"""
+        if isinstance(value, list):
+            return ', '.join([str(tag.name) for tag in value])
+        if hasattr(value, 'all'):
+            return ', '.join([tag.name for tag in value.all()])
+        return value
+
 class PostForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    tags = TagField(
+        required=False,
+        help_text="输入标签，用逗号分隔。",
+        label="标签"
     )
 
     class Meta:

@@ -56,7 +56,8 @@ def post_create(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            form.save_m2m()  # 保存多对多关系（标签）
+            # 手动处理多对多关系
+            post.tags.set(form.cleaned_data['tags'])
             return redirect('blog:post_detail', pk=post.pk)
     else:
         form = PostForm()
@@ -69,9 +70,11 @@ def post_edit(request, pk):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
+            post.tags.set(form.cleaned_data['tags'])  # ✅ 更新 tag
             return redirect('blog:post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
+        
     return render(request, 'blog/post_form.html', {'form': form})
 
 @login_required
@@ -82,31 +85,10 @@ def post_delete(request, pk):
         return redirect('blog:post_list')
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
 
-from .models import Comment
+
 from .forms import CommentForm
 
-# @login_required
-# def add_comment(request, pk):
-#     post = get_object_or_404(Post, pk=pk, is_published=True)
-    
-#     if request.method == 'POST':
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             comment = form.save(commit=False)
-#             comment.post = post
-#             comment.author = request.user
-#             comment.save()
-#             messages.success(request, "评论已发布！")
-#             return redirect('blog:post_detail', pk=post.pk)
-#         else:
-#             # 如果表单无效，仍然返回到详情页（通常在模板中显示错误）
-#             messages.error(request, "评论发布失败，请检查内容。")
-#     else:
-#         form = CommentForm()
-    
-#     # 通常，评论表单直接在 post_detail 模板中渲染，所以这里可能不需要单独渲染
-#     # 更常见的做法是：POST 失败时，带着表单错误重定向回详情页
-#     return redirect('blog:post_detail', pk=post.pk)
+
 
 def add_comment(request, pk):
     post = get_object_or_404(Post, pk=pk, is_published=True)
