@@ -1,3 +1,5 @@
+<!-- blog/post_form.html -->
+
 {% load widget_tweaks %}
 
 <!DOCTYPE html>
@@ -205,7 +207,7 @@
                     </div>
                     {% endif %}
                     <small class="form-text text-muted mt-1">
-                        {{ form.tags.help_text|default:"输入标签，用英文逗号分隔" }}
+                        {{ form.tags.help_text|default:"输入标签，逗号分隔" }}
                     </small>
                 </div>
                 <!-- 提交按钮 -->

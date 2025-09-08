@@ -33,6 +33,8 @@
                     作者：{{ post.author.username }}
                     <span class="mx-2">•</span>
                     {{ post.created_at|date:"Y年m月d日" }}
+                    <span class="mx-1">•</span>
+                    阅读 {{ post.views.count }} 次
                     {% if post.updated_at != post.created_at %}
                     <span class="text-warning ms-1">(已编辑)</span>
                     {% endif %}

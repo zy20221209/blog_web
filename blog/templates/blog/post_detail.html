@@ -28,6 +28,8 @@
                 <span>作者：<strong>{{ post.author.username }}</strong></span>
                 <span class="mx-2">•</span>
                 <span>发布于：{{ post.created_at|date:"Y年m月d日 H:i" }}</span>
+                <span class="mx-2">•</span>
+                <span>阅读 <strong>{{ post.views.count }}</strong> 次</span>
                 {% if post.updated_at and post.updated_at != post.created_at %}
                 <span class="mx-2">•</span>
                 <span class="text-warning small">（已编辑）</span>
@@ -43,6 +45,8 @@
                     {% endfor %}
                 </div>
             </div>
+
+
         </header>
 
 

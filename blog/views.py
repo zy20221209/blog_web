@@ -3,7 +3,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
-from .models import Post, Tag
+from .models import Post, Tag,PostView
 from .forms import PostForm
 from django.contrib import messages
 from django.db.models import Q
@@ -39,13 +39,39 @@ def post_list(request):
         'query':query
     })
 
-# blog/views.py
+
+# 工具函数：获取用户真实 IP（考虑代理）
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comment_form = CommentForm()  # 确保传递
+
+
+    session_id=request.session.session_key
+    if not session_id:
+        request.session.save()  # 必须先保存才能拿到 session_key
+        session_id = request.session.session_key
+     # 检查是否已记录
+    if not PostView.objects.filter(post=post, session_id=session_id).exists():
+        PostView.objects.create(
+            post=post,
+            session_id=session_id,
+            ip_address=get_client_ip(request)  # 可选：记录 IP
+        )
+
+
+
     return render(request, 'blog/post_detail.html', {
         'post': post,
-        'comment_form': comment_form
+        'comment_form': comment_form,
     })
 
 @login_required
@@ -117,3 +143,5 @@ def add_comment(request, pk):
         'post': post,
         'form': form,
     })
+
+

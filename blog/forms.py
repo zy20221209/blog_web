@@ -8,7 +8,7 @@ from .models import Tag
 class TagWidget(TextInput):
     """自定义 Widget：显示为文本输入框"""
     def __init__(self, attrs=None):
-        default_attrs = {'placeholder': '输入标签，用英文逗号分隔'}
+        default_attrs = {'placeholder': '输入标签，逗号分隔'}
         if attrs:
             default_attrs.update(attrs)
         super().__init__(default_attrs)
@@ -67,7 +67,7 @@ class PostForm(forms.ModelForm):
                     }),
                 }
         help_texts = {
-                    'tags': '支持中文标签，多个标签用英文逗号“,”分隔。',
+                    'tags': '支持中文标签，多个标签用逗号“,”分隔。',
                 }
     def clean_title(self):
         title = self.cleaned_data['title']

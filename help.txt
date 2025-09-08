@@ -1,1 +1,11 @@
-ngrok http --url=lively-rich-tadpole.ngrok-free.app 8000 
+ngrok http --url=lively-rich-tadpole.ngrok-free.app 8000
+
+
+
+最好使用ssh连接
+
+git add .
+
+git commit -m "添加功能"
+
+git push 
